@@ -18,6 +18,14 @@ export type Pagination = {
   totalPages: number
 }
 
+export type SampleMenu = {
+  id: number
+  foodName: string
+  price: number
+  type: string
+  image: string
+}
+
 // All Restaurant
 export type AllRestaurant = {
   id: number
@@ -31,6 +39,19 @@ export type AllRestaurant = {
   priceRange: PriceRange
 }
 
+// Recommendation
+export type Recommendation = {
+  id: number
+  name: string
+  star: number
+  place: string
+  logo: string
+  images: string[]
+  reviewCount: number
+  sampleMenus: SampleMenu[]
+  isFrequentlyOrdered: boolean
+}
+
 // Get All Restaurant 
 export type GetAllRestaurantResponse = {
   success: boolean;
@@ -39,6 +60,16 @@ export type GetAllRestaurantResponse = {
     restaurants: AllRestaurant[];
     pagination: Pagination;
     filters: Filters;
+  };
+};
+
+// Get Recommended Restaurant 
+export type GetRecommendedRestaurantResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    message: string
+    recommendations: Recommendation[]
   };
 };
 
