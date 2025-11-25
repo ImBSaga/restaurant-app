@@ -8,6 +8,7 @@ import type { RootState } from "@/features/store";
 
 // Shadcn UI
 import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
 
 // Hooks
 import {
@@ -30,12 +31,18 @@ export default function Home() {
   const handleAllRestaurant = () => {
     setSelectedCategory(1);
   };
+  const [inputValue, setInputValue] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   // All Restaurant
   const { data: restaurants } = useRestaurantsQuery({
     page: 1,
     limit: 10,
   });
+
+  const filteredRestaurants = restaurants?.data?.restaurants?.filter((r) =>
+    r.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   // Recommended Restaurant
   const { data: recommendedRestaurants, error } =
@@ -53,14 +60,12 @@ export default function Home() {
         <>
           <h1>All Restaurant</h1>
           <div>
-            {restaurants?.data?.restaurants?.map(
-              (restaurant: AllRestaurant) => (
-                <div key={restaurant.id}>
-                  <h2>{restaurant.name}</h2>
-                  <p>{restaurant.place}</p>
-                </div>
-              )
-            )}
+            {filteredRestaurants?.map((restaurant: AllRestaurant) => (
+              <div className="flex flex-col gap-2 border" key={restaurant.id}>
+                <h2>{restaurant.name}</h2>
+                <p>{restaurant.place}</p>
+              </div>
+            ))}
           </div>
         </>
       ) : (
@@ -72,6 +77,19 @@ export default function Home() {
           >
             Home
           </p>
+          <Input
+            placeholder="Search restaurants..."
+            className="pl-10"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                setSelectedCategory(1);
+                setSearchTerm(inputValue);
+              }
+            }}
+          />
+
           <Button onClick={handleAllRestaurant}>All Restaurant</Button>
 
           {user && <Button onClick={handleLogout}>Logout</Button>}
@@ -89,7 +107,11 @@ export default function Home() {
             <div>
               {recommendedRestaurants?.data?.recommendations?.map(
                 (restaurant: Recommendation) => (
-                  <div key={restaurant.id}>
+                  <div
+                    className="flex flex-col gap-2 border"
+                    onClick={() => navigate(`/restaurant/${restaurant.id}`)}
+                    key={restaurant.id}
+                  >
                     <h2>{restaurant.name}</h2>
                     <p>{restaurant.place}</p>
                   </div>
