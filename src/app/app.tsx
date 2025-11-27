@@ -3,6 +3,7 @@ import { Layout } from "./layout";
 import Home from "../pages/home";
 import Auth from "../pages/auth";
 import RestaurantDetail from "../pages/restaurant-detail";
+import Cart from "../pages/cart";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="auth" element={<Auth />} />
           <Route path="restaurant/:id" element={<RestaurantDetail />} />
+          <Route path="cart" element={<Cart />} />
         </Route>
       </Routes>
     </BrowserRouter>

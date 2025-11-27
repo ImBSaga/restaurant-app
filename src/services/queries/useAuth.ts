@@ -7,7 +7,7 @@ import type {
   Login,
 } from "@/types/auth.type";
 
-import { setCredentials } from "@/features/auth/authSlice";
+import { setCredentials } from "@/features/auth/auth-slice";
 import { store } from "@/features/store";
 
 const prefix = "/auth";

@@ -3,7 +3,7 @@ import { useState } from "react";
 
 // Redux
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "@/features/auth/authSlice";
+import { logout } from "@/features/auth/auth-slice";
 import type { RootState } from "@/features/store";
 
 // Shadcn UI
