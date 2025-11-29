@@ -5,6 +5,7 @@ import {
   useRegisterMutation,
   useLoginMutation,
 } from "@/services/queries/useAuth";
+import { Button } from "@/components/ui/button";
 
 export default function Auth() {
   const navigate = useNavigate();
@@ -69,7 +70,9 @@ export default function Auth() {
                 setLoginData({ ...loginData, password: e.target.value })
               }
             />
-            <button type="submit">Sign Up</button>
+            <Button variant="default" type="submit">
+              Sign In
+            </Button>
           </form>
         </TabsContent>
         <TabsContent value="register">
@@ -106,7 +109,9 @@ export default function Auth() {
                 setFormData({ ...formData, password: e.target.value })
               }
             />
-            <button type="submit">Sign In</button>
+            <Button variant="default" type="submit">
+              Sign Up
+            </Button>
           </form>
         </TabsContent>
       </Tabs>
