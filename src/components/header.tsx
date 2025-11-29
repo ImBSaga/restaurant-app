@@ -12,17 +12,31 @@ export function Header() {
         <Link to="/" className="flex items-center gap-2 font-bold text-xl">
           <span>Foody</span>
         </Link>
-        <Link
-          to="/cart"
-          className="relative hover:scale-110 transition-transform p-2"
-        >
-          <ShoppingCart className="w-6 h-6" />
-          {totalQuantity > 0 && (
-            <div className="absolute top-0 right-0 bg-red-500 text-white rounded-full min-w-[20px] h-5 px-1 flex items-center justify-center text-xs font-bold animate-in zoom-in">
-              {totalQuantity}
-            </div>
-          )}
-        </Link>
+
+        <div className="flex items-center gap-2">
+          <Link
+            to="/cart"
+            className="relative hover:scale-110 transition-transform p-2"
+          >
+            <ShoppingCart className="w-6 h-6" />
+            {totalQuantity > 0 && (
+              <div className="absolute top-0 right-0 bg-red-500 text-white rounded-full min-w-[20px] h-5 px-1 flex items-center justify-center text-xs font-bold animate-in zoom-in">
+                {totalQuantity}
+              </div>
+            )}
+          </Link>
+
+          <Link
+            to="/profile"
+            className="hover:scale-110 transition-transform p-2"
+          >
+            <img
+              src="/images/image-avatar.jpg"
+              alt="Avatar"
+              className="w-10 h-10 rounded-full"
+            />
+          </Link>
+        </div>
       </div>
     </header>
   );

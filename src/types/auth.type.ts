@@ -1,24 +1,23 @@
 // Base Type
 export type Register = {
-  name: string
-  email: string
-  phone: string
-  password: string
-}
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+};
 
 export type User = {
-  id: number
-  name: string
-  email: string
-  phone: string
-  createdAt: string
-}
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  createdAt: string;
+};
 
 export type Login = {
-  email: string
-  password: string
-}
-
+  email: string;
+  password: string;
+};
 
 // Register Response
 export type RegisterResponse = {
@@ -30,7 +29,7 @@ export type RegisterResponse = {
   };
 };
 
-// Login Response 
+// Login Response
 export type LoginResponse = {
   success: boolean;
   message: string;
@@ -40,4 +39,33 @@ export type LoginResponse = {
   };
 };
 
+// Profile Response
+export type ProfileResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    id: number;
+    name: string;
+    email: string;
+    phone: string;
+  };
+};
 
+// Update Profile
+export type UpdateProfileRequest = {
+  name: string;
+  phone: string;
+  currentPassword: string;
+  newPassword: string;
+};
+export type UpdateProfileResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    id: number;
+    name: string;
+    email: string;
+    phone: string;
+    createdAt: string;
+  };
+};
