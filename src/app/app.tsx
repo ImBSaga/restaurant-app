@@ -1,9 +1,12 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Layout } from "./layout";
-import Home from "../pages/home";
-import Auth from "../pages/auth";
-import RestaurantDetail from "../pages/restaurant-detail";
-import Cart from "../pages/cart";
+import { Layout } from "@/app/layout";
+import Home from "@/pages/home";
+import Auth from "@/pages/auth";
+import RestaurantDetail from "@/pages/restaurant-detail";
+import Cart from "@/pages/cart";
+import Checkout from "@/pages/checkout";
+import Success from "@/pages/success";
+import Orders from "@/pages/orders";
 
 function App() {
   return (
@@ -14,6 +17,9 @@ function App() {
           <Route path="auth" element={<Auth />} />
           <Route path="restaurant/:id" element={<RestaurantDetail />} />
           <Route path="cart" element={<Cart />} />
+          <Route path="checkout" element={<Checkout />} />
+          <Route path="success" element={<Success />} />
+          <Route path="orders" element={<Orders />} />q
         </Route>
       </Routes>
     </BrowserRouter>

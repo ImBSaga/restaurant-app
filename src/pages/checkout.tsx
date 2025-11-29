@@ -3,15 +3,25 @@ import {
   useUpdateCartQuantityMutation,
   useRemoveItemFromCartMutation,
 } from "@/services/queries/useCart";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import { Minus, Plus, Trash2, MapPin, FileText } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import type { Cart, Item } from "@/types/cart.type";
+import { paymentMethodData } from "@/constants/payment-method-data";
+import { useState } from "react";
+import { useCreateOrderMutation } from "@/services/queries/useOrder";
 
-export default function CartPage() {
+export default function CheckoutPage() {
   const navigate = useNavigate();
   const { data: cartData, isLoading } = useGetCartQuery();
   const { mutate: updateQuantity } = useUpdateCartQuantityMutation();
   const { mutate: removeItem } = useRemoveItemFromCartMutation();
+  const { mutate: createOrder, isPending: isCreatingOrder } =
+    useCreateOrderMutation();
+
+  const [selectedPaymentMethod, setSelectedPaymentMethod] =
+    useState<string>("");
+  const [address, setAddress] = useState("");
+  const [notes, setNotes] = useState("");
 
   if (isLoading) {
     return <div className="flex justify-center p-8">Loading cart...</div>;
@@ -43,15 +53,44 @@ export default function CartPage() {
   }
 
   const handleCheckout = () => {
-    navigate("/checkout");
+    if (!selectedPaymentMethod) {
+      alert("Please select a payment method");
+      return;
+    }
+    if (!address) {
+      alert("Please enter a delivery address");
+      return;
+    }
+
+    createOrder(
+      {
+        paymentMethod: selectedPaymentMethod,
+        deliveryAddress: address,
+        notes: notes,
+      },
+      {
+        onSuccess: (data) => {
+          navigate("/success", {
+            state: {
+              order: data.data.transaction,
+            },
+          });
+        },
+        onError: (error) => {
+          console.error("Checkout failed:", error);
+          alert("Checkout failed. Please try again.");
+        },
+      }
+    );
   };
 
   return (
-    <div className="mx-auto">
+    <div className="mx-auto  px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Shopping Cart</h1>
 
-      <div className="grid gap-8 md:grid-cols-3">
-        <div className="md:col-span-2 space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-6">
+          {/* Cart Items */}
           {carts.map((restaurantCart: Cart, index: number) => (
             <div
               key={index}
@@ -130,18 +169,101 @@ export default function CartPage() {
               </div>
             </div>
           ))}
+
+          {/* Delivery Details */}
+          <div className="bg-white rounded-lg shadow-sm border p-6">
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <MapPin className="w-5 h-5" /> Delivery Details
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Delivery Address
+                </label>
+                <textarea
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder="Enter your full delivery address"
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                  rows={3}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Notes (Optional)
+                </label>
+                <div className="relative">
+                  <FileText className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                  <input
+                    type="text"
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    placeholder="Any special instructions?"
+                    className="w-full pl-10 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Payment Methods */}
+          <div className="bg-white rounded-lg shadow-sm border p-6">
+            <h2 className="text-xl font-semibold mb-4">Payment Method</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {paymentMethodData.map((method) => (
+                <div
+                  key={method.name}
+                  onClick={() => setSelectedPaymentMethod(method.name)}
+                  className={`cursor-pointer border rounded-lg p-4 flex items-center gap-4 transition-all ${
+                    selectedPaymentMethod === method.name
+                      ? "border-blue-500 bg-blue-50 ring-2 ring-blue-200"
+                      : "hover:border-gray-300 hover:bg-gray-50"
+                  }`}
+                >
+                  <div className="w-12 h-8 flex items-center justify-center bg-white rounded border p-1">
+                    <img
+                      src={method.src}
+                      alt={method.alt}
+                      className="max-w-full max-h-full object-contain"
+                    />
+                  </div>
+                  <span className="font-medium text-gray-700">
+                    {method.name}
+                  </span>
+                  <div className="ml-auto">
+                    <div
+                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                        selectedPaymentMethod === method.name
+                          ? "border-blue-500"
+                          : "border-gray-300"
+                      }`}
+                    >
+                      {selectedPaymentMethod === method.name && (
+                        <div className="w-2.5 h-2.5 rounded-full bg-blue-500" />
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
-        <div className="md:col-span-1">
+        {/* Order Summary */}
+        <div className="lg:col-span-1">
           <div className="bg-white rounded-lg shadow-sm border p-6 sticky top-24">
-            <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
-            <div className="space-y-2 mb-4">
+            <h2 className="text-xl font-semibold mb-4">Payment Summary</h2>
+            <div className="space-y-3 mb-6">
               <div className="flex justify-between text-gray-600">
                 <span>Items ({summary?.totalItems})</span>
                 <span>${summary?.totalPrice}</span>
               </div>
               <div className="flex justify-between text-gray-600">
                 <span>Delivery Fee</span>
+                <span>$0.00</span>
+              </div>
+              <div className="flex justify-between text-gray-600">
+                <span>Service Fee</span>
                 <span>$0.00</span>
               </div>
             </div>
@@ -153,9 +275,10 @@ export default function CartPage() {
             </div>
             <button
               onClick={handleCheckout}
-              className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors"
+              disabled={isCreatingOrder}
+              className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors disabled:bg-blue-300 disabled:cursor-not-allowed"
             >
-              Checkout
+              {isCreatingOrder ? "Processing..." : "Buy"}
             </button>
           </div>
         </div>
