@@ -2,16 +2,31 @@ import {
   useGetCartQuery,
   useUpdateCartQuantityMutation,
   useRemoveItemFromCartMutation,
+  useDeleteCartMutation,
 } from "@/services/queries/useCart";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import type { Cart, Item } from "@/types/cart.type";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { useState } from "react";
 
 export default function CartPage() {
   const navigate = useNavigate();
   const { data: cartData, isLoading } = useGetCartQuery();
   const { mutate: updateQuantity } = useUpdateCartQuantityMutation();
   const { mutate: removeItem } = useRemoveItemFromCartMutation();
+  const { mutate: deleteCart } = useDeleteCartMutation();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   if (isLoading) {
     return <div className="flex justify-center p-8">Loading cart...</div>;
@@ -46,9 +61,41 @@ export default function CartPage() {
     navigate("/checkout");
   };
 
+  const handleClearCart = () => {
+    deleteCart(undefined, {
+      onSuccess: () => {
+        setIsDialogOpen(false);
+      },
+    });
+  };
+
   return (
     <div className="mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Shopping Cart</h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">My Cart</h1>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button variant="destructive">Clear Cart</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Clear Cart</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to clear your cart? This action cannot be
+                undone.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="secondary">Cancel</Button>
+              </DialogClose>
+              <Button variant="destructive" onClick={handleClearCart}>
+                Clear Cart
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
 
       <div className="grid gap-8 md:grid-cols-3">
         <div className="md:col-span-2 space-y-6">

@@ -59,9 +59,25 @@ export default function Home() {
       {selectedCategory ? (
         <>
           <h1>All Restaurant</h1>
+          <Input
+            placeholder="Search restaurants..."
+            className="pl-10"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                setSelectedCategory(1);
+                setSearchTerm(inputValue);
+              }
+            }}
+          />
           <div>
             {filteredRestaurants?.map((restaurant: AllRestaurant) => (
-              <div className="flex flex-col gap-2 border" key={restaurant.id}>
+              <div
+                onClick={() => navigate(`/restaurant/${restaurant.id}`)}
+                className="flex flex-col gap-2 border"
+                key={restaurant.id}
+              >
                 <h2>{restaurant.name}</h2>
                 <p>{restaurant.place}</p>
               </div>
@@ -70,13 +86,7 @@ export default function Home() {
         </>
       ) : (
         <>
-          <p
-            onClick={() => {
-              navigate("/auth");
-            }}
-          >
-            Home
-          </p>
+          <p>Home</p>
           <Input
             placeholder="Search restaurants..."
             className="pl-10"
