@@ -45,6 +45,8 @@ export function Header() {
                 className="w-10 h-10 rounded-full"
               />
             </Link>
+
+            <p>{user?.name}</p>
           </div>
         ) : (
           <div className="flex items-center gap-2">

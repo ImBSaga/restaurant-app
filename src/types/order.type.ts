@@ -48,9 +48,19 @@ export type Transaction = {
 };
 
 // Create Order
+export type CreateOrderRequestItem = {
+  menuId: number;
+  quantity: number;
+};
+export type CreateOrderRequestRestaurant = {
+  restaurantId: number;
+  items: CreateOrderRequestItem[];
+};
 export type CreateOrderRequest = {
-  paymentMethod: string;
+  restaurants: CreateOrderRequestRestaurant[];
   deliveryAddress: string;
+  phone: string;
+  paymentMethod: string;
   notes: string;
 };
 export type CreateOrderResponse = {

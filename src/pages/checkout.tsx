@@ -9,6 +9,9 @@ import type { Cart, Item } from "@/types/cart.type";
 import { paymentMethodData } from "@/constants/payment-method-data";
 import { useState } from "react";
 import { useCreateOrderMutation } from "@/services/queries/useOrder";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/features/store";
+import { Input } from "@/components/ui/input";
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
@@ -18,9 +21,12 @@ export default function CheckoutPage() {
   const { mutate: createOrder, isPending: isCreatingOrder } =
     useCreateOrderMutation();
 
+  const { user } = useSelector((state: RootState) => state.auth);
+
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<string>("");
   const [address, setAddress] = useState("");
+  const [phone, setPhone] = useState(user?.phone || "");
   const [notes, setNotes] = useState("");
 
   if (isLoading) {
@@ -62,33 +68,86 @@ export default function CheckoutPage() {
       return;
     }
 
-    createOrder(
-      {
-        paymentMethod: selectedPaymentMethod,
-        deliveryAddress: address,
-        notes: notes,
+    const orderPayload = {
+      restaurants: carts.map((cart) => ({
+        restaurantId: cart.restaurant.id,
+        items: cart.items.map((item) => ({
+          menuId: item.menu.id,
+          quantity: item.quantity,
+        })),
+      })),
+      deliveryAddress: address,
+      phone: phone,
+      paymentMethod: selectedPaymentMethod,
+      notes: notes,
+    };
+
+    createOrder(orderPayload, {
+      onSuccess: (data) => {
+        navigate("/success", {
+          state: {
+            order: data.data.transaction,
+          },
+        });
       },
-      {
-        onSuccess: (data) => {
-          navigate("/success", {
-            state: {
-              order: data.data.transaction,
-            },
-          });
-        },
-        onError: (error) => {
-          console.error("Checkout failed:", error);
-          alert("Checkout failed. Please try again.");
-        },
-      }
-    );
+      onError: (error) => {
+        console.error("Checkout failed:", error);
+        alert("Checkout failed. Please try again.");
+      },
+    });
   };
 
   return (
     <div className="mx-auto  px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Shopping Cart</h1>
+      <h1 className="text-3xl font-bold mb-8">Checkout</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Delivery Details */}
+        <div className="bg-white rounded-lg shadow-sm border p-6">
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <MapPin className="w-5 h-5" /> Delivery Address
+          </h2>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Address
+              </label>
+              <Input
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="Enter your full delivery address"
+                className="w-full"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Phone
+              </label>
+              <Input
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="Enter your phone number"
+                className="w-full"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Notes (Optional)
+              </label>
+              <div className="relative">
+                <FileText className="absolute left-3 top-3 w-5 h-5 text-gray-400 z-10" />
+                <Input
+                  type="text"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Any special instructions?"
+                  className="w-full pl-10"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="lg:col-span-2 space-y-6">
           {/* Cart Items */}
           {carts.map((restaurantCart: Cart, index: number) => (
@@ -169,42 +228,6 @@ export default function CheckoutPage() {
               </div>
             </div>
           ))}
-
-          {/* Delivery Details */}
-          <div className="bg-white rounded-lg shadow-sm border p-6">
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <MapPin className="w-5 h-5" /> Delivery Details
-            </h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Delivery Address
-                </label>
-                <textarea
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  placeholder="Enter your full delivery address"
-                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                  rows={3}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Notes (Optional)
-                </label>
-                <div className="relative">
-                  <FileText className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-                  <input
-                    type="text"
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    placeholder="Any special instructions?"
-                    className="w-full pl-10 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
 
           {/* Payment Methods */}
           <div className="bg-white rounded-lg shadow-sm border p-6">
