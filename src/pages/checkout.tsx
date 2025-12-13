@@ -2,6 +2,7 @@ import {
   useGetCartQuery,
   useUpdateCartQuantityMutation,
   useRemoveItemFromCartMutation,
+  useDeleteCartMutation,
 } from "@/services/queries/useCart";
 import { Minus, Plus, Trash2, MapPin, FileText } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -18,6 +19,7 @@ export default function CheckoutPage() {
   const { data: cartData, isLoading } = useGetCartQuery();
   const { mutate: updateQuantity } = useUpdateCartQuantityMutation();
   const { mutate: removeItem } = useRemoveItemFromCartMutation();
+  const { mutate: deleteCart } = useDeleteCartMutation();
   const { mutate: createOrder, isPending: isCreatingOrder } =
     useCreateOrderMutation();
 
@@ -84,6 +86,7 @@ export default function CheckoutPage() {
 
     createOrder(orderPayload, {
       onSuccess: (data) => {
+        deleteCart();
         navigate("/success", {
           state: {
             order: data.data.transaction,

@@ -72,10 +72,12 @@ export type CreateOrderResponse = {
 };
 
 // Get Order
+export type GetOrderItem = Item & {
+  image: string;
+};
 export type RestaurantOrder = {
-  restaurantId: number;
-  restaurantName: string;
-  items: Item[];
+  restaurant: Restaurant;
+  items: GetOrderItem[];
   subtotal: number;
 };
 export type Order = {
@@ -83,6 +85,8 @@ export type Order = {
   transactionId: string;
   status: string;
   paymentMethod: string;
+  deliveryAddress: string;
+  phone: string;
   pricing: Pricing;
   restaurants: RestaurantOrder[];
   createdAt: string;

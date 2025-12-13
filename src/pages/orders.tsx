@@ -4,9 +4,9 @@ import {
   useGetMyReviewsQuery,
   useUpdateReviewMutation,
 } from "@/services/queries/useReview";
-import type { Order, RestaurantOrder, Item } from "@/types/order.type";
+import type { Order, RestaurantOrder } from "@/types/order.type";
 import type { MyReview } from "@/types/review.type";
-import { Clock, MapPin, Star } from "lucide-react";
+import { Clock, Star } from "lucide-react";
 import { useState } from "react";
 import {
   Dialog,
@@ -169,7 +169,7 @@ export default function OrdersPage() {
               {order.restaurants.map(
                 (restaurant: RestaurantOrder, rIndex: number) => {
                   const existingReview = getReviewForRestaurant(
-                    restaurant.restaurantId
+                    restaurant.restaurant.id
                   );
                   return (
                     <div
@@ -178,14 +178,19 @@ export default function OrdersPage() {
                     >
                       <div className="flex justify-between items-start mb-3">
                         <h3 className="font-semibold text-lg flex items-center gap-2">
-                          <MapPin className="w-4 h-4 text-gray-400" />
-                          {restaurant.restaurantName}
+                          <img
+                            src={restaurant.restaurant.logo}
+                            alt={restaurant.restaurant.name}
+                            width={50}
+                            height={50}
+                          />
+                          {restaurant.restaurant.name}
                         </h3>
                         <button
                           onClick={() =>
                             handleOpenReview(
                               order.transactionId,
-                              restaurant.restaurantId,
+                              restaurant.restaurant.id,
                               existingReview
                             )
                           }
@@ -195,18 +200,27 @@ export default function OrdersPage() {
                         </button>
                       </div>
                       <div className="space-y-3 pl-6">
-                        {restaurant.items.map((item: Item, iIndex: number) => (
+                        {restaurant.items.map((item, index: number) => (
                           <div
-                            key={iIndex}
-                            className="flex justify-between text-sm"
+                            key={index}
+                            className="flex justify-between text-sm items-center"
                           >
-                            <div className="flex gap-2">
-                              <span className="font-medium text-gray-900">
-                                {item.quantity}x
-                              </span>
-                              <span className="text-gray-600">
-                                {item.menuName}
-                              </span>
+                            <div className="flex gap-3 items-center">
+                              {item.image && (
+                                <img
+                                  src={item.image}
+                                  alt={item.menuName}
+                                  className="w-12 h-12 object-cover rounded-md"
+                                />
+                              )}
+                              <div className="flex flex-col">
+                                <span className="text-gray-800 font-medium">
+                                  {item.menuName}
+                                </span>
+                                <span className="text-gray-500 text-xs">
+                                  {item.quantity}x
+                                </span>
+                              </div>
                             </div>
                             <span className="text-gray-900 font-medium">
                               {formatCurrency(item.itemTotal)}
