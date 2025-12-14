@@ -1,14 +1,8 @@
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-
-// Redux
-import { useDispatch, useSelector } from "react-redux";
-import { logout } from "@/features/auth/auth-slice";
-import type { RootState } from "@/features/store";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 // Shadcn UI
 import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
 
 // Hooks
 import {
@@ -22,17 +16,20 @@ import type { AllRestaurant, Recommendation } from "@/types/restaurant.type";
 export default function Home() {
   const navigate = useNavigate();
 
-  // Redux
-  const dispatch = useDispatch();
-  const { user } = useSelector((state: RootState) => state.auth);
+  const { searchTerm } = useOutletContext<{ searchTerm: string }>();
 
   // Filters
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (searchTerm) {
+      setSelectedCategory(1);
+    }
+  }, [searchTerm]);
+
   const handleAllRestaurant = () => {
     setSelectedCategory(1);
   };
-  const [inputValue, setInputValue] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
 
   // All Restaurant
   const { data: restaurants } = useRestaurantsQuery({
@@ -48,29 +45,12 @@ export default function Home() {
   const { data: recommendedRestaurants, error } =
     useRecommendedRestaurantsQuery();
 
-  // Logout
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate("/auth");
-  };
-
   return (
     <div className="space-y-12">
       {selectedCategory ? (
         <>
           <h1>All Restaurant</h1>
-          <Input
-            placeholder="Search restaurants..."
-            className="pl-10"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                setSelectedCategory(1);
-                setSearchTerm(inputValue);
-              }
-            }}
-          />
+
           <div>
             {filteredRestaurants?.map((restaurant: AllRestaurant) => (
               <div
@@ -87,22 +67,8 @@ export default function Home() {
       ) : (
         <>
           <p>Home</p>
-          <Input
-            placeholder="Search restaurants..."
-            className="pl-10"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                setSelectedCategory(1);
-                setSearchTerm(inputValue);
-              }
-            }}
-          />
 
           <Button onClick={handleAllRestaurant}>All Restaurant</Button>
-
-          {user && <Button onClick={handleLogout}>Logout</Button>}
 
           <p>Recommended</p>
           {error ? (
