@@ -13,9 +13,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="auth" element={<Auth />} />
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
-          <Route path="auth" element={<Auth />} />
           <Route path="restaurant/:id" element={<RestaurantDetail />} />
           <Route path="cart" element={<Cart />} />
           <Route path="checkout" element={<Checkout />} />

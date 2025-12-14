@@ -1,120 +1,51 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { useState, useEffect } from "react";
-import {
-  useRegisterMutation,
-  useLoginMutation,
-} from "@/services/queries/useAuth";
-import { Button } from "@/components/ui/button";
+import { useSearchParams } from "react-router-dom";
+import { LoginForm } from "@/components/container/auth/login-form";
+import { RegisterForm } from "@/components/container/auth/register-form";
 
 export default function Auth() {
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const registerMutation = useRegisterMutation();
-  const loginMutation = useLoginMutation();
-
-  // Redirect after successful login/register
-  useEffect(() => {
-    if (loginMutation.isSuccess || registerMutation.isSuccess) {
-      navigate("/");
-    }
-  }, [loginMutation.isSuccess, registerMutation.isSuccess, navigate]);
-
-  // Register
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    password: "",
-  });
-
-  const handleRegister = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    registerMutation.mutate(formData);
-  };
-
-  // Login
-  const [loginData, setLoginData] = useState({ email: "", password: "" });
-
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    loginMutation.mutate(loginData);
-  };
-
   return (
-    <div className="space-y-12">
-      <Tabs
-        value={searchParams.get("tab") || "login"}
-        onValueChange={(value) => setSearchParams({ tab: value })}
-      >
-        <TabsList>
-          <TabsTrigger value="login">Sign In</TabsTrigger>
-          <TabsTrigger value="register">Sign Up</TabsTrigger>
-        </TabsList>
-        <TabsContent value="login">
-          <form className="space-y-4 flex flex-col" onSubmit={handleLogin}>
-            <input
-              type="email"
-              placeholder="Email"
-              value={loginData.email}
-              onChange={(e) =>
-                setLoginData({ ...loginData, email: e.target.value })
-              }
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={loginData.password}
-              onChange={(e) =>
-                setLoginData({ ...loginData, password: e.target.value })
-              }
-            />
-            <Button variant="default" type="submit">
-              Sign In
-            </Button>
-          </form>
-        </TabsContent>
-        <TabsContent value="register">
-          <form className="space-y-4 flex flex-col" onSubmit={handleRegister}>
-            <input
-              type="text"
-              placeholder="Name"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-            />
-            <input
-              type="email"
-              placeholder="Email"
-              value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
-            />
-            <input
-              type="phone"
-              placeholder="Phone"
-              value={formData.phone}
-              onChange={(e) =>
-                setFormData({ ...formData, phone: e.target.value })
-              }
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-            />
-            <Button variant="default" type="submit">
-              Sign Up
-            </Button>
-          </form>
-        </TabsContent>
-      </Tabs>
-    </div>
+    <main className="justify-center items-center flex h-screen">
+      <div className="hidden h-full md:block w-[55%]">
+        <img
+          className="w-full h-full object-cover"
+          src="/images/image-auth.png"
+          alt="Logo"
+        />
+      </div>
+
+      <div className="w-full px-6 flex flex-col gap-4 md:w-[45%]">
+        <div className="w-30 h-8">
+          <img
+            className="w-full h-full"
+            src="/icons/icon-logo-text.svg"
+            alt="Logo"
+          />
+        </div>
+        <div className="text-neutral-950">
+          <h3 className="text-display-xs font-extrabold">Welcome Back</h3>
+          <p className="text-sm font-medium">
+            Good to see you again! Let’s eat
+          </p>
+        </div>
+        <Tabs
+          value={searchParams.get("tab") || "login"}
+          onValueChange={(value) => setSearchParams({ tab: value })}
+        >
+          <TabsList>
+            <TabsTrigger value="login">Sign In</TabsTrigger>
+            <TabsTrigger value="register">Sign Up</TabsTrigger>
+          </TabsList>
+          <TabsContent value="login">
+            <LoginForm />
+          </TabsContent>
+          <TabsContent value="register">
+            <RegisterForm />
+          </TabsContent>
+        </Tabs>
+      </div>
+    </main>
   );
 }
