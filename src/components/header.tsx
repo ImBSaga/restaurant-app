@@ -29,7 +29,7 @@ export function Header() {
   const { user } = useSelector((state: RootState) => state.auth);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b">
+    <header className="sticky top-0 z-50 w-full border-b bg-white">
       {/* Mobile */}
       <div className=" flex h-15.75 md:h-19.75 items-center justify-between px-4 md:px-30">
         <Link to="/" className="flex items-center w-10 h-10">
