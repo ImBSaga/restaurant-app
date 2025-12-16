@@ -139,7 +139,7 @@ export default function RestaurantDetail() {
                     <h3 className="font-semibold text-lg">{menu.foodName}</h3>
                     <p className="text-gray-500 text-sm">{menu.type}</p>
                     <p className="font-bold text-green-600 text-lg mt-1">
-                      ${menu.price}
+                      Rp. {menu.price}
                     </p>
                   </div>
                 </div>

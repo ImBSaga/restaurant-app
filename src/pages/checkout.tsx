@@ -180,7 +180,7 @@ export default function CheckoutPage() {
                     <div className="flex-1">
                       <div className="flex justify-between items-start mb-2">
                         <h3 className="font-medium">{item.menu.foodName}</h3>
-                        <p className="font-semibold">${item.itemTotal}</p>
+                        <p className="font-semibold">Rp. {item.itemTotal}</p>
                       </div>
                       <p className="text-sm text-gray-500 mb-3">
                         {item.menu.type}
@@ -282,21 +282,21 @@ export default function CheckoutPage() {
             <div className="space-y-3 mb-6">
               <div className="flex justify-between text-gray-600">
                 <span>Items ({summary?.totalItems})</span>
-                <span>${summary?.totalPrice}</span>
+                <span>Rp. {summary?.totalPrice}</span>
               </div>
               <div className="flex justify-between text-gray-600">
                 <span>Delivery Fee</span>
-                <span>$0.00</span>
+                <span>Rp. 0.00</span>
               </div>
               <div className="flex justify-between text-gray-600">
                 <span>Service Fee</span>
-                <span>$0.00</span>
+                <span>Rp. 0.00</span>
               </div>
             </div>
             <div className="border-t pt-4 mb-6">
               <div className="flex justify-between font-bold text-lg">
                 <span>Total</span>
-                <span>${summary?.totalPrice}</span>
+                <span>Rp. {summary?.totalPrice}</span>
               </div>
             </div>
             <button
